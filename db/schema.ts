@@ -9,6 +9,7 @@ import {
     date,
     boolean,
     integer,
+    type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 
 // --- ENUMS ---
@@ -19,7 +20,7 @@ export const estadoProyectoEnum = pgEnum('estado_proyecto', ['activo', 'completa
 export const estadoTareaEnum = pgEnum('estado_tarea', ['pendiente', 'en_curso', 'completada', 'retrasada', 'cancelada']);
 export const prioridadTareaEnum = pgEnum('prioridad_tarea', ['baja', 'media', 'alta']);
 export const tipoComentarioEnum = pgEnum('tipo_comentario', ['justificacion', 'feedback']);
-export const eventoComentarioEnum = pgEnum('evento_comentario', ['reprogramacion', 'adelanto', 'atraso']);
+export const eventoComentarioEnum = pgEnum('evento_comentario', ['reprogramacion', 'adelanto', 'atraso', 'cancelacion']);
 export const tipoNotificacionEnum = pgEnum('tipo_notificacion', ['cambio_cronograma', 'tarea_retrasada', 'tarea_adelantada', 'tarea_cancelada', 'comentario_nuevo']);
 
 // --- USUARIO ---
@@ -54,7 +55,7 @@ export const proyectos = pgTable('proyectos', {
 
 export const tareas = pgTable('tareas', {
     id: serial('id').primaryKey(),
-    tareaId: integer('tarea_id').notNull().references(() => proyectos.id),
+    proyectoId: integer('proyecto_id').notNull().references(() => proyectos.id),
     titulo: varchar('titulo', { length: 255 }).notNull(),
     descripcion: text('descripcion').notNull(),
     fechaInicioPlan: date('fecha_inicio').notNull(),
@@ -86,9 +87,27 @@ export const comentarios = pgTable('comentarios', {
     tareaId: integer('tarea_id').notNull().references(() => tareas.id),
     autorId: uuid('autor_id').notNull().references(() => usuarios.id),
     tipo: tipoComentarioEnum('tipo').notNull(),
-    evento: eventoComentarioEnum('evento').notNull(),
+    evento: eventoComentarioEnum('evento'),
     contenido: text('contenido').notNull(),
+    visibleParaAdmin: boolean('visible_para_admin').notNull().default(true),
     resuelto: boolean('resuelto').notNull().default(false),
+    comentarioPadreId: integer('comentario_padre_id').references((): AnyPgColumn => comentarios.id),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// --- EVIDENCIA ---
+
+export const tipoArchivoEnum = pgEnum('tipo_archivo', ['imagen', 'pdf']);
+
+export const evidencias = pgTable('evidencias', {
+    id: serial('id').primaryKey(),
+    tareaId: integer('tarea_id').notNull().references(() => tareas.id),
+    fecha: date('fecha').notNull(),
+    titulo: varchar('titulo', { length: 255 }).notNull(),
+    descripcion: text('descripcion'),
+    archivoPath: text('archivo_path').notNull(),
+    archivoTipo: tipoArchivoEnum('archivo_tipo').notNull(),
+    autorId: uuid('autor_id').notNull().references(() => usuarios.id),
     createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -96,7 +115,8 @@ export const comentarios = pgTable('comentarios', {
 
 export const notificaciones = pgTable('notificaciones', {
    id: serial('id').primaryKey(),
-   usuarioId: uuid('usuario_id').notNull().references(() => usuarios.id), 
+   usuarioId: uuid('usuario_id').notNull().references(() => usuarios.id),
+   tareaId: integer('tarea_id').references(() => tareas.id),
    tipo: tipoNotificacionEnum('tipo').notNull(),
    mensaje: text('mensaje').notNull(),
    leida: boolean('leida').notNull().default(false),

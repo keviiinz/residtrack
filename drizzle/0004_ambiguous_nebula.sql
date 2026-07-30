@@ -1,0 +1,1 @@
+ALTER TABLE "comentarios" ALTER COLUMN "evento" DROP NOT NULL;

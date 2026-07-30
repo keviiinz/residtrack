@@ -15,6 +15,48 @@
       "when": 1785353975953,
       "tag": "0001_outstanding_mac_gargan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785391191192,
+      "tag": "0002_young_dazzler",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785395287523,
+      "tag": "0003_flat_kang",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1785397017936,
+      "tag": "0004_ambiguous_nebula",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785397625885,
+      "tag": "0005_lonely_luckman",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1785398914219,
+      "tag": "0006_closed_jigsaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785428882834,
+      "tag": "0007_slimy_proudstar",
+      "breakpoints": true
     }
   ]
 }
